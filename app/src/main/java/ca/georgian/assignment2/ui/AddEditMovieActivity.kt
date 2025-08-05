@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ca.georgian.assignment2.data.Movie
 import ca.georgian.assignment2.databinding.ActivityAddEditBinding
+import ca.georgian.assignment2.viewmodel.MovieViewModel
 
 class AddEditMovieActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEditBinding
@@ -50,7 +51,8 @@ class AddEditMovieActivity : AppCompatActivity() {
             if (validateInputs()) {
                 val movie = createMovieFromInputs()
                 if (binding.btnSubmit.text == "Update") {
-                    viewModel.updateMovie(movie.copy(id = currentMovieId))
+                    // Pass both document ID and Movie object
+                    viewModel.updateMovie(currentMovieId, movie.copy(id = currentMovieId))
                 } else {
                     viewModel.addMovie(movie)
                 }
@@ -81,12 +83,15 @@ class AddEditMovieActivity : AppCompatActivity() {
 
     private fun createMovieFromInputs(): Movie {
         return Movie(
+            id = currentMovieId,
             title = binding.etTitle.text.toString(),
             studio = binding.etStudio.text.toString(),
             rating = binding.etRating.text.toString(),
             year = binding.etYear.text.toString(),
+            posterUrl = binding.etPoster.text.toString(),
             poster = binding.etPoster.text.toString(),
-            description = binding.etDescription.text.toString()
+            description = binding.etDescription.text.toString(),
+            userId = ""
         )
     }
 }

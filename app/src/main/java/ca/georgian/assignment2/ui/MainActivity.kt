@@ -8,7 +8,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import ca.georgian.assignment2.R
+import ca.georgian.assignment2.auth.LoginActivity
 import ca.georgian.assignment2.databinding.ActivityMainBinding
+import ca.georgian.assignment2.ui.adapters.MyAdapter
 import ca.georgian.assignment2.viewmodel.AuthViewModel
 import ca.georgian.assignment2.viewmodel.MovieViewModel
 
@@ -39,12 +42,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MovieDetailActivity::class.java).apply {
                 putExtra("mode", "edit")
                 putExtra("documentId", documentId)
-                putExtra("title", movie.getTitle())
-                putExtra("studio", movie.getStudio())
-                putExtra("rating", movie.getRating())
-                putExtra("year", movie.getYear())
-                putExtra("poster", movie.getPoster())
-                putExtra("description", movie.getDescription())
+                putExtra("title", movie.title)
+                putExtra("studio", movie.studio)
+                putExtra("rating", movie.rating)
+                putExtra("year", movie.year)
+                putExtra("poster", movie.poster)
+                putExtra("posterUrl", movie.posterUrl)
+                putExtra("description", movie.description)
             }
             startActivity(intent)
         }

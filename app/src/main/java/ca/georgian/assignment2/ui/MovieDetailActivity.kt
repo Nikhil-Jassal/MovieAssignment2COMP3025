@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import ca.georgian.assignment2.data.Movie
 import ca.georgian.assignment2.databinding.ActivityMovieDetailBinding
-import ca.georgian.assignment2.model.Item
 import ca.georgian.assignment2.viewmodel.MovieViewModel
 import com.squareup.picasso.Picasso
 
@@ -71,10 +71,20 @@ class MovieDetailActivity : AppCompatActivity() {
             return
         }
 
-        val movie = Item(title, studio, rating, year, poster, description)
+        val movie = Movie(
+            id = documentId ?: "",
+            title = title,
+            studio = studio,
+            rating = rating,
+            year = year,
+            posterUrl = poster,
+            description = description,
+            userId = "", // Set this to current user's ID if needed
+            poster = poster
+        )
 
         if (mode == "edit" && documentId != null) {
-            movieViewModel.updateMovie(movie, documentId!!)
+            movieViewModel.updateMovie(documentId!!, movie)
         } else {
             movieViewModel.addMovie(movie)
         }

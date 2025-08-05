@@ -2,19 +2,20 @@ package ca.georgian.assignment2.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ca.georgian.assignment2.model.Item
+import ca.georgian.assignment2.MyViewHolder
+import ca.georgian.assignment2.R
+import ca.georgian.assignment2.data.Movie
 import com.squareup.picasso.Picasso
 
 class MyAdapter(
     private val context: Context,
-    private var movies: List<Pair<Item, String>>,
-    private val onItemClick: (Item, String) -> Unit
+    private var movies: List<Pair<Movie, String>>,
+    private val onItemClick: (Movie, String) -> Unit
 ) : RecyclerView.Adapter<MyViewHolder>() {
 
-    fun updateMovies(newMovies: List<Pair<Item, String>>) {
+    fun updateMovies(newMovies: List<Pair<Movie, String>>) {
         movies = newMovies
         notifyDataSetChanged()
     }
@@ -28,13 +29,13 @@ class MyAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val (movie, documentId) = movies[position]
 
-        holder.title.text = movie.getTitle()
-        holder.studio.text = "Studio: ${movie.getStudio()}"
-        holder.rating.text = "Rating: ${movie.getRating()}"
-        holder.year.text = "Year: ${movie.getYear()}"
+        holder.title.text = movie.title
+        holder.studio.text = "Studio: ${movie.studio}"
+        holder.rating.text = "Rating: ${movie.rating}"
+        holder.year.text = "Year: ${movie.year}"
 
         Picasso.get()
-            .load(movie.getPoster())
+            .load(movie.poster)
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.error)
             .into(holder.poster)

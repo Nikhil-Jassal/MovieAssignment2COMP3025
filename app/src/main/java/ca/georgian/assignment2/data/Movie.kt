@@ -7,5 +7,7 @@ data class Movie(
     val rating: String = "",
     val posterUrl: String = "",
     val description: String = "",
-    val userId: String = ""
+    val userId: String = "",
+    val studio: String,
+    val poster: String
 )
