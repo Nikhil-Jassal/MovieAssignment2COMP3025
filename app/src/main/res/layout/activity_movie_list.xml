@@ -19,16 +19,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:title="My Movie Database"
-            app:titleTextColor="@android:color/white"
-            app:menu="@menu/menu_main"/>
+            app:titleTextColor="@android:color/white"/>
 
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/searchBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:hint="Search movies"
-            app:layout_scrollFlags="scroll|enterAlways"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- RecyclerView for movie list -->
@@ -39,7 +31,7 @@
         android:clipToPadding="false"
         android:padding="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/item_movie"/>
+        tools:listitem="@layout/item_layout"/>
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

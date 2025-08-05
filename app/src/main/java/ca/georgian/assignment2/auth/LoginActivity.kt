@@ -2,80 +2,62 @@ package ca.georgian.assignment2.auth
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
-import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ca.georgian.assignment2.databinding.ActivityLoginBinding
-import ca.georgian.assignment2.ui.MovieListActivity
-import ca.georgian.assignment2.viewmodels.AuthViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
+import ca.georgian.assignment2.viewmodel.AuthViewModel
+import ca.georgian.assignment2.ui.MainActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var auth: FirebaseAuth
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
+        setupObservers()
 
-        // Direct login button click listener with hardcoded values (for testing)
         binding.btnLogin.setOnClickListener {
-            // For testing (like in the example), we could use:
-            // signIn(email = "test@auth.com", password = "password")
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
-            // For production, use actual user input:
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
-
-            if (validateInputs(email, password)) {
-                signIn(email, password)
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            authViewModel.login(email, password)
         }
 
-        binding.tvRegisterLink.setOnClickListener {
+        binding.tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
-    private fun signIn(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success
-                    Log.d(TAG, "signInWithEmail:success")
-                    startActivity(Intent(this, MovieListActivity::class.java))
-                    finish()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    Toast.makeText(
-                        baseContext, "Authentication failed: ${task.exception?.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+    private fun setupObservers() {
+        authViewModel.authState.observe(this) { state ->
+            when (state) {
+                is AuthViewModel.AuthState.Loading -> {
+                    // Show loading indicator
                 }
+                is AuthViewModel.AuthState.Authenticated -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+                is AuthViewModel.AuthState.Unauthenticated -> {
+                    // User is not authenticated
+                }
+                else -> {}
             }
-    }
-
-    private fun validateInputs(email: String, password: String): Boolean {
-        if (email.isEmpty()) {
-            binding.etEmail.error = "Email is required"
-            return false
         }
-        if (password.isEmpty()) {
-            binding.etPassword.error = "Password is required"
-            return false
-        }
-        return true
-    }
 
-    companion object {
-        private const val TAG = "LoginActivity"
+        authViewModel.error.observe(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

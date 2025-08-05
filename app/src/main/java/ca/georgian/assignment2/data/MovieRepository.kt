@@ -1,48 +1,63 @@
 package ca.georgian.assignment2.data
 
-import com.google.firebase.auth.ktx.auth
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class MovieRepository {
-    private val db: FirebaseFirestore = Firebase.firestore
-    private val auth = Firebase.auth
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
-    fun getUserMovies(): Flow<List<Movie>> = flow {
+    suspend fun getMovies(): List<Movie> {
         val currentUser = auth.currentUser
-        if (currentUser == null) {
-            emit(emptyList())
-            return@flow
+        return if (currentUser != null) {
+            try {
+                db.collection("movies")
+                    .whereEqualTo("userId", currentUser.uid)
+                    .orderBy("title", Query.Direction.ASCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Movie::class.java)
+            } catch (e: Exception) {
+                Log.e("MovieRepository", "Error getting movies", e)
+                emptyList()
+            }
+        } else {
+            emptyList()
         }
-
-        val snapshot = db.collection("movies")
-            .whereEqualTo("userId", currentUser.uid)
-            .get()
-            .await()
-
-        val movies = snapshot.documents.map { doc ->
-            doc.toObject(Movie::class.java)?.copy(id = doc.id) ?: Movie()
-        }
-        emit(movies)
     }
 
     suspend fun addMovie(movie: Movie) {
-        val currentUser = auth.currentUser ?: return
-        val movieWithUser = movie.copy(userId = currentUser.uid)
-        db.collection("movies").add(movieWithUser).await()
+        try {
+            val currentUser = auth.currentUser
+            if (currentUser != null) {
+                val movieWithUser = movie.copy(userId = currentUser.uid)
+                db.collection("movies").add(movieWithUser).await()
+            }
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error adding movie", e)
+            throw e
+        }
     }
 
     suspend fun updateMovie(movie: Movie) {
-        if (movie.id.isEmpty()) return
-        db.collection("movies").document(movie.id).set(movie).await()
+        try {
+            db.collection("movies").document(movie.id).set(movie).await()
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error updating movie", e)
+            throw e
+        }
     }
 
     suspend fun deleteMovie(movieId: String) {
-        if (movieId.isEmpty()) return
-        db.collection("movies").document(movieId).delete().await()
+        try {
+            db.collection("movies").document(movieId).delete().await()
+        } catch (e: Exception) {
+            Log.e("MovieRepository", "Error deleting movie", e)
+            throw e
+        }
     }
 }

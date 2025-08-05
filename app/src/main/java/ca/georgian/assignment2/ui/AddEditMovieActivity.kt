@@ -5,12 +5,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import ca.georgian.assignment2.data.Movie
 import ca.georgian.assignment2.databinding.ActivityAddEditBinding
-import ca.georgian.assignment2.viewmodels.MovieViewModel
 
 class AddEditMovieActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEditBinding
     private val viewModel: MovieViewModel by viewModels()
-    private var currentMovie: Movie? = null
+    private var currentMovieId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,9 +17,9 @@ class AddEditMovieActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val mode = intent.getStringExtra("mode")
-        currentMovie = intent.getParcelableExtra("movie")
+        currentMovieId = intent.getStringExtra("id") ?: ""
 
-        if (mode == "edit" && currentMovie != null) {
+        if (mode == "edit") {
             setupEditMode()
         } else {
             setupAddMode()
@@ -32,14 +31,13 @@ class AddEditMovieActivity : AppCompatActivity() {
     private fun setupEditMode() {
         binding.tvTitle.text = "Edit Movie"
         binding.btnSubmit.text = "Update"
-        currentMovie?.let { movie ->
-            binding.etTitle.setText(movie.title)
-            binding.etStudio.setText(movie.studio)
-            binding.etRating.setText(movie.rating)
-            binding.etYear.setText(movie.year)
-            binding.etPoster.setText(movie.poster)
-            binding.etDescription.setText(movie.description)
-        }
+
+        binding.etTitle.setText(intent.getStringExtra("title"))
+        binding.etStudio.setText(intent.getStringExtra("studio"))
+        binding.etRating.setText(intent.getStringExtra("rating"))
+        binding.etYear.setText(intent.getStringExtra("year"))
+        binding.etPoster.setText(intent.getStringExtra("poster"))
+        binding.etDescription.setText(intent.getStringExtra("description"))
     }
 
     private fun setupAddMode() {
@@ -52,7 +50,7 @@ class AddEditMovieActivity : AppCompatActivity() {
             if (validateInputs()) {
                 val movie = createMovieFromInputs()
                 if (binding.btnSubmit.text == "Update") {
-                    viewModel.updateMovie(movie)
+                    viewModel.updateMovie(movie.copy(id = currentMovieId))
                 } else {
                     viewModel.addMovie(movie)
                 }
@@ -66,19 +64,23 @@ class AddEditMovieActivity : AppCompatActivity() {
     }
 
     private fun validateInputs(): Boolean {
-        // Add validation logic
-        return true
+        var isValid = true
+
+        if (binding.etTitle.text.toString().isEmpty()) {
+            binding.etTitle.error = "Title is required"
+            isValid = false
+        }
+
+        if (binding.etStudio.text.toString().isEmpty()) {
+            binding.etStudio.error = "Studio is required"
+            isValid = false
+        }
+
+        return isValid
     }
 
     private fun createMovieFromInputs(): Movie {
-        return currentMovie?.copy(
-            title = binding.etTitle.text.toString(),
-            studio = binding.etStudio.text.toString(),
-            rating = binding.etRating.text.toString(),
-            year = binding.etYear.text.toString(),
-            poster = binding.etPoster.text.toString(),
-            description = binding.etDescription.text.toString()
-        ) ?: Movie(
+        return Movie(
             title = binding.etTitle.text.toString(),
             studio = binding.etStudio.text.toString(),
             rating = binding.etRating.text.toString(),

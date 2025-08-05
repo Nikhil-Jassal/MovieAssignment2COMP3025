@@ -1,34 +1,84 @@
 package ca.georgian.assignment2.ui
 
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import ca.georgian.assignment2.databinding.ActivityMovieDetailBinding
+import ca.georgian.assignment2.model.Item
+import ca.georgian.assignment2.viewmodel.MovieViewModel
 import com.squareup.picasso.Picasso
 
 class MovieDetailActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMovieDetailBinding
+    private val movieViewModel: MovieViewModel by viewModels()
+    private var mode: String? = null
+    private var documentId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.movie_detail)
+        binding = ActivityMovieDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val title = intent.getStringExtra("title")
-        val studio = intent.getStringExtra("studio")
-        val rating = intent.getStringExtra("rating")
-        val year = intent.getStringExtra("year")
-        val poster = intent.getStringExtra("poster")
-        val description = intent.getStringExtra("description")
+        mode = intent.getStringExtra("mode")
+        documentId = intent.getStringExtra("documentId")
 
-        findViewById<TextView>(R.id.detailTitle).text = title
-        findViewById<TextView>(R.id.detailStudio).text = "Studio: $studio"
-        findViewById<TextView>(R.id.detailRating).text = "Rating: $rating"
-        findViewById<TextView>(R.id.detailYear).text = "Year: $year"
-        findViewById<TextView>(R.id.detailDescription).text = description
-        val posterImageView = findViewById<ImageView>(R.id.detailPoster)
+        if (mode == "edit") {
+            binding.etTitle.setText(intent.getStringExtra("title"))
+            binding.etStudio.setText(intent.getStringExtra("studio"))
+            binding.etRating.setText(intent.getStringExtra("rating"))
+            binding.etYear.setText(intent.getStringExtra("year"))
+            binding.etPoster.setText(intent.getStringExtra("poster"))
+            binding.etDescription.setText(intent.getStringExtra("description"))
 
-        Picasso.get().load(poster).into(posterImageView)
+            Picasso.get().load(intent.getStringExtra("poster")).into(binding.ivPoster)
+            binding.btnSave.text = "Update"
+        } else {
+            binding.btnSave.text = "Add"
+        }
 
-        findViewById<ImageView>(R.id.backIcon).setOnClickListener {
+        binding.btnSave.setOnClickListener {
+            saveMovie()
+        }
+
+        binding.btnCancel.setOnClickListener {
             finish()
         }
+
+        binding.btnDelete.setOnClickListener {
+            documentId?.let { id ->
+                movieViewModel.deleteMovie(id)
+                finish()
+            } ?: run {
+                Toast.makeText(this, "Cannot delete new movie", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Show delete button only in edit mode
+        binding.btnDelete.visibility = if (mode == "edit") android.view.View.VISIBLE else android.view.View.GONE
+    }
+
+    private fun saveMovie() {
+        val title = binding.etTitle.text.toString().trim()
+        val studio = binding.etStudio.text.toString().trim()
+        val rating = binding.etRating.text.toString().trim()
+        val year = binding.etYear.text.toString().trim()
+        val poster = binding.etPoster.text.toString().trim()
+        val description = binding.etDescription.text.toString().trim()
+
+        if (title.isEmpty() || studio.isEmpty() || rating.isEmpty() || year.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val movie = Item(title, studio, rating, year, poster, description)
+
+        if (mode == "edit" && documentId != null) {
+            movieViewModel.updateMovie(movie, documentId!!)
+        } else {
+            movieViewModel.addMovie(movie)
+        }
+
+        finish()
     }
 }

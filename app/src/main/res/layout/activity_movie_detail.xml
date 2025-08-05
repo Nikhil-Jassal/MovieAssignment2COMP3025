@@ -1,65 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#fff">
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
         <ImageView
-            android:id="@+id/backIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_menu_revert"
-            android:layout_gravity="start"
-            android:contentDescription="Back" />
+            android:id="@+id/moviePoster"
+            android:layout_width="80dp"
+            android:layout_height="120dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/placeholder" />
 
-        <ImageView
-            android:id="@+id/detailPoster"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="12dp"
-            android:scaleType="fitCenter" />
-
-        <TextView
-            android:id="@+id/detailTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Movie Title"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:id="@+id/detailYear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Year: 2023" />
-
-        <TextView
-            android:id="@+id/detailRating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rating: 8.5" />
-
-        <TextView
-            android:id="@+id/detailStudio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Studio: Warner Bros" />
-
-        <TextView
-            android:id="@+id/detailDescription"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description..."
-            android:layout_marginTop="12dp" />
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/movieTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Movie Title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/movieStudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Studio: Studio Name" />
+
+            <TextView
+                android:id="@+id/movieRating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Rating: 5.0" />
+
+            <TextView
+                android:id="@+id/movieYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Year: 2023" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
-
-
+</androidx.cardview.widget.CardView>
