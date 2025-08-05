@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "435904450116",
+    "project_id": "fir-authstoresec02",
+    "storage_bucket": "fir-authstoresec02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435904450116:android:24b6952f9a882f15fd3611",
+        "android_client_info": {
+          "package_name": "ca.georgian.assignment2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfBuWxmt9NpuuOAknTAISBBuMG4-68Mrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,19 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ca.georgian.assignment2.R
+import ca.georgian.assignment2.databinding.ActivityLoginBinding
 import ca.georgian.assignment2.databinding.ActivityRegisterBinding
+import ca.georgian.assignment2.ui.MovieListActivity
+import ca.georgian.assignment2.viewmodels.AuthViewModel
 
-class RegisterActivity : AppCompatActivity()
-{
+class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private val authViewModel: AuthViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)

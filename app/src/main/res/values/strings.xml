@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Assignment2</string>
+    <string name="app_name">Movie Database</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register_link_text">Don\'t have an account? Register here</string>
 </resources>

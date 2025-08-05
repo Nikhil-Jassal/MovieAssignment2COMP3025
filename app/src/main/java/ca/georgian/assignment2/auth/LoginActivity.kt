@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -13,8 +12,7 @@ import ca.georgian.assignment2.databinding.ActivityLoginBinding
 import ca.georgian.assignment2.ui.MovieListActivity
 import ca.georgian.assignment2.viewmodels.AuthViewModel
 
-class LoginActivity : AppCompatActivity()
-{
+class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val authViewModel: AuthViewModel by viewModels()
 
