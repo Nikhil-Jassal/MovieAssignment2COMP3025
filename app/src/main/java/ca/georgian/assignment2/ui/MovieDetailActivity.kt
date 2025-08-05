@@ -4,26 +4,30 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import ca.georgian.assignment2.R
 import ca.georgian.assignment2.data.Movie
 import ca.georgian.assignment2.databinding.ActivityMovieDetailBinding
 import ca.georgian.assignment2.viewmodel.MovieViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 
 class MovieDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMovieDetailBinding
     private val movieViewModel: MovieViewModel by viewModels()
-    private var mode: String? = null
     private var documentId: String? = null
+    private var isEditMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mode = intent.getStringExtra("mode")
+        // Check if we're in edit mode
+        isEditMode = intent.hasExtra("documentId")
         documentId = intent.getStringExtra("documentId")
 
-        if (mode == "edit") {
+        if (isEditMode) {
+            // Load existing data
             binding.etTitle.setText(intent.getStringExtra("title"))
             binding.etStudio.setText(intent.getStringExtra("studio"))
             binding.etRating.setText(intent.getStringExtra("rating"))
@@ -31,14 +35,30 @@ class MovieDetailActivity : AppCompatActivity() {
             binding.etPoster.setText(intent.getStringExtra("poster"))
             binding.etDescription.setText(intent.getStringExtra("description"))
 
-            Picasso.get().load(intent.getStringExtra("poster")).into(binding.ivPoster)
+            // Load poster image if URL exists
+            intent.getStringExtra("poster")?.takeIf { it.isNotEmpty() }?.let { url ->
+                Picasso.get()
+                    .load(url)
+                    .placeholder(R.drawable.ic_movie_placeholder)
+                    .error(R.drawable.error)
+                    .into(binding.ivPoster)
+            }
+
             binding.btnSave.text = "Update"
+            binding.btnDelete.visibility = android.view.View.VISIBLE
         } else {
-            binding.btnSave.text = "Add"
+            binding.btnSave.text = "Save"
+            binding.btnDelete.visibility = android.view.View.GONE
         }
 
+        setupButtonListeners()
+    }
+
+    private fun setupButtonListeners() {
         binding.btnSave.setOnClickListener {
-            saveMovie()
+            if (validateInputs()) {
+                saveMovie()
+            }
         }
 
         binding.btnCancel.setOnClickListener {
@@ -53,37 +73,49 @@ class MovieDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Cannot delete new movie", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-        // Show delete button only in edit mode
-        binding.btnDelete.visibility = if (mode == "edit") android.view.View.VISIBLE else android.view.View.GONE
+    private fun validateInputs(): Boolean {
+        return when {
+            binding.etTitle.text.toString().trim().isEmpty() -> {
+                binding.etTitle.error = "Title is required"
+                false
+            }
+            binding.etStudio.text.toString().trim().isEmpty() -> {
+                binding.etStudio.error = "Studio is required"
+                false
+            }
+            binding.etRating.text.toString().trim().isEmpty() -> {
+                binding.etRating.error = "Rating is required"
+                false
+            }
+            binding.etYear.text.toString().trim().isEmpty() -> {
+                binding.etYear.error = "Year is required"
+                false
+            }
+            else -> true
+        }
     }
 
     private fun saveMovie() {
-        val title = binding.etTitle.text.toString().trim()
-        val studio = binding.etStudio.text.toString().trim()
-        val rating = binding.etRating.text.toString().trim()
-        val year = binding.etYear.text.toString().trim()
-        val poster = binding.etPoster.text.toString().trim()
-        val description = binding.etDescription.text.toString().trim()
-
-        if (title.isEmpty() || studio.isEmpty() || rating.isEmpty() || year.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: run {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
             return
         }
 
         val movie = Movie(
-            id = documentId ?: "",
-            title = title,
-            studio = studio,
-            rating = rating,
-            year = year,
-            posterUrl = poster,
-            description = description,
-            userId = "", // Set this to current user's ID if needed
-            poster = poster
+            id = documentId ?: "", // Will be generated by Firestore for new movies
+            title = binding.etTitle.text.toString().trim(),
+            studio = binding.etStudio.text.toString().trim(),
+            rating = binding.etRating.text.toString().trim(),
+            year = binding.etYear.text.toString().trim(),
+            poster = binding.etPoster.text.toString().trim(),
+            posterUrl = binding.etPoster.text.toString().trim(), // Assuming same as poster
+            description = binding.etDescription.text.toString().trim(),
+            userId = currentUserId
         )
 
-        if (mode == "edit" && documentId != null) {
+        if (isEditMode && documentId != null) {
             movieViewModel.updateMovie(documentId!!, movie)
         } else {
             movieViewModel.addMovie(movie)

@@ -6,4 +6,9 @@
         android:id="@+id/menu_logout"
         android:title="Logout"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_load_samples"
+        android:title="Load Sample Movies"
+        app:showAsAction="never" />
 </menu>
