@@ -4,4 +4,6 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="register_link_text">Don\'t have an account? Register here</string>
+    <string name="register">Register</string>
+    <string name="already_have_account">Already have an account? Login here</string>
 </resources>
