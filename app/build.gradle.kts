@@ -40,17 +40,23 @@ android {
 }
 
 dependencies {
-
+    // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Firebase (using BOM)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("com.squareup.picasso:picasso:2.71828")
 
+    // Third-party
+    implementation(libs.picasso)
 }
